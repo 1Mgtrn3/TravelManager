@@ -28,17 +28,17 @@ namespace TravelManager.Controllers
             {
                 // Create a new ExRate if collection is empty,
 
-                _context.ExchangeRates.Add(new ExchangeRate {  });
+                _context.ExchangeRates.Add(new ExchangeRate { FirstCurrencyId = 1, SecondCurrencyId =1 });
                 _context.SaveChanges();
             }
-            return await _context.ExchangeRates.ToListAsync();
+            return await _context.ExchangeRates.Include("FirstCurrency").Include("SecondCurrency").ToListAsync();
         }
 
         // GET: api/ExchangeRates/5
         [HttpGet("{id}")]
         public async Task<ActionResult<ExchangeRate>> GetExchangeRate(long id)
         {
-            var exchangeRate = await _context.ExchangeRates.FindAsync(id);
+            var exchangeRate = await _context.ExchangeRates.Include("FirstCurrency").Include("SecondCurrency").SingleOrDefaultAsync(r => r.ExchangeRateId == id);
 
             if (exchangeRate == null)
             {
