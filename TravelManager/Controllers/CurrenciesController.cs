@@ -20,8 +20,8 @@ namespace TravelManager.Controllers
             _context = context;
             if (_context.Currencies.Count() == 0)
             {
-                // Create a new TodoItem if collection is empty,
-                // which means you can't delete all TodoItems.
+                // Create a new Currency if collection is empty,
+                
                 _context.Currencies.Add(new Currency { Name = "American Dollar (USD)" , Symbol = '$' });
                 _context.SaveChanges();
             }
