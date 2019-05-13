@@ -5,15 +5,12 @@ using System.Threading.Tasks;
 
 namespace TravelManager.Models
 {
-    public class User
+    public class AuthData
     {
-        public long UserId { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
         public string Email { get; set; }
-        public string IdentityId { get; set; }
-        public long CurrencyId { get; set; }
-        public Currency Currency { get; set; }
 
+        public long CurrencyId { get; set; }
     }
 }
