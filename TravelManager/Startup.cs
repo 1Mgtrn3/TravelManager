@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using TravelManager.Auth;
 
 namespace TravelManager
 {
@@ -41,7 +42,7 @@ namespace TravelManager
                             .AddJsonOptions(
                             options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
                                             );
-
+            services.AddSingleton<IJwtFactory, JwtFactory>();
             //services.AddIdentity<UserIdentity, IdentityRole>()
             //    .AddEntityFrameworkStores<TravelManagerContext>()
             //    .AddDefaultTokenProviders();

@@ -11,6 +11,7 @@ using System.Security.Claims;
 using TravelManager.Auth;
 using TravelManager.Helpers;
 using Newtonsoft.Json;
+using Microsoft.Extensions.Options;
 
 namespace TravelManager.Controllers
 {
@@ -26,10 +27,12 @@ namespace TravelManager.Controllers
         //{
 
         //}
-        public AuthController(UserManager<UserIdentity> userManager, TravelManagerContext context)
+        public AuthController(UserManager<UserIdentity> userManager, TravelManagerContext context, IJwtFactory jwtFactory, IOptions<JwtIssuerOptions> jwtOptions)
         {
             _userManager = userManager;
             _context = context;
+            _jwtFactory = jwtFactory;
+            _jwtOptions = jwtOptions.Value;
         }
 
              
@@ -96,7 +99,7 @@ namespace TravelManager.Controllers
             // check the credentials
             if (await _userManager.CheckPasswordAsync(userToVerify, password))
             {
-                return await Task.FromResult(_jwtFactory.GenerateClaimsIdentity(userName, userToVerify.Id));
+                return await Task.FromResult(_jwtFactory.GenerateClaimsIdentity(userToVerify.UserName, userToVerify.Id));
             }
 
             // Credentials are invalid, or account doesn't exist

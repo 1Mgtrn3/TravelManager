@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace TravelManager.Models
 {
-    public class TravelManagerContext:DbContext
+    public class TravelManagerContext: IdentityDbContext<UserIdentity>
     {
         public TravelManagerContext(DbContextOptions<TravelManagerContext> options) : base(options)
         {
@@ -14,7 +16,8 @@ namespace TravelManager.Models
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-
+            //modelBuilder.Entity<IdentityUserRole<Guid>>().HasKey(p => new { p.UserId, p.RoleId });
+            base.OnModelCreating(modelBuilder);
             //one-to-one
             modelBuilder.Entity<Document>().HasOne(d => d.DocumentAsignee).WithOne(d => d.Document).HasForeignKey<DocumentAsignee>(d => d.DocumentId);
             modelBuilder.Entity<Employee>().HasOne(d => d.DocumentAsignee).WithOne(d => d.Employee).HasForeignKey<DocumentAsignee>(d => d.EmployeeId);
