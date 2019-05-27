@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TravelManager.Helpers;
 using TravelManager.Models;
 
 namespace TravelManager.Controllers
@@ -14,20 +17,29 @@ namespace TravelManager.Controllers
     public class EventsController : ControllerBase
     {
         private readonly TravelManagerContext _context;
+        private readonly UserManager<UserIdentity> _userManager;
 
-        public EventsController(TravelManagerContext context)
+        public EventsController(UserManager<UserIdentity> userManager, TravelManagerContext context)
         {
+            _userManager = userManager;
             _context = context;
         }
 
         // GET: api/Events
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Event>>> GetEvents()
         {
-            return await _context.Events.ToListAsync();
+            var listToConvert =  await _context.Events.ToListAsync();
+            foreach (var item in listToConvert)
+            {
+               await AdjustToUser(item);
+            }
+            return listToConvert;
         }
 
         // GET: api/Events/5
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<Event>> GetEvent(long id)
         {
@@ -38,10 +50,11 @@ namespace TravelManager.Controllers
                 return NotFound();
             }
 
-            return @event;
+            return await AdjustToUser(@event);
         }
 
         // PUT: api/Events/5
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutEvent(long id, Event @event)
         {
@@ -72,6 +85,7 @@ namespace TravelManager.Controllers
         }
 
         // POST: api/Events
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult<Event>> PostEvent(Event @event)
         {
@@ -82,6 +96,7 @@ namespace TravelManager.Controllers
         }
 
         // DELETE: api/Events/5
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<ActionResult<Event>> DeleteEvent(long id)
         {
@@ -101,5 +116,28 @@ namespace TravelManager.Controllers
         {
             return _context.Events.Any(e => e.EventId == id);
         }
+
+        private async Task<Event> AdjustToUser(Event @event) {
+            var identityUser =  GetCurrentUserAsync();
+            var identityUserId = identityUser?.Id;
+            User user = await _context.Users.SingleOrDefaultAsync(u => u.IdentityId == identityUserId.ToString());
+
+            if (@event.CurrencyId != user.CurrencyId)
+            {
+                var converter = new CurrencyConverter(_context);
+                var convertedCost = converter.Convert(@event.Cost, @event.CurrencyId, user.CurrencyId);
+                if (convertedCost != @event.Cost)
+                {
+
+                    @event.CurrencyId = user.CurrencyId;
+                    @event.Cost = convertedCost;
+
+                }
+                
+            }
+            return @event;
+
+        }
+        private Task<UserIdentity> GetCurrentUserAsync() => _userManager.GetUserAsync(HttpContext.User);
     }
 }
