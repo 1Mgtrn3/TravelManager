@@ -118,9 +118,9 @@ namespace TravelManager.Controllers
         }
 
         private async Task<Event> AdjustToUser(Event @event) {
-            var identityUser =  GetCurrentUserAsync();
+            UserIdentity identityUser = await GetCurrentUserAsync();
             var identityUserId = identityUser?.Id;
-            User user = await _context.Users.SingleOrDefaultAsync(u => u.IdentityId == identityUserId.ToString());
+            User user = await _context.Users.SingleOrDefaultAsync(u => u.IdentityId == identityUserId);
 
             if (@event.CurrencyId != user.CurrencyId)
             {
@@ -138,6 +138,6 @@ namespace TravelManager.Controllers
             return @event;
 
         }
-        private Task<UserIdentity> GetCurrentUserAsync() => _userManager.GetUserAsync(HttpContext.User);
+        private Task<UserIdentity> GetCurrentUserAsync() =>  _userManager.FindByNameAsync(HttpContext.User.Claims.ToAsyncEnumerable().ElementAt(0).Result.Value);
     }
 }

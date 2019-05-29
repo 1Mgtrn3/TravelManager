@@ -52,6 +52,7 @@ namespace TravelManager.Auth
             {
                 new Claim(Helpers.Constants.Strings.JwtClaimIdentifiers.Id, id),
                 new Claim(Helpers.Constants.Strings.JwtClaimIdentifiers.Rol, Helpers.Constants.Strings.JwtClaims.ApiAccess)
+
             });
         }
 

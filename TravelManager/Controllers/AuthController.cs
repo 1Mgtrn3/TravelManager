@@ -63,7 +63,7 @@ namespace TravelManager.Controllers
             var result = await _userManager.CreateAsync(userIdentity, authData.Password);
             if (!result.Succeeded) return BadRequest();//BadRequestObjectResult(Errors.Add);
             //var identityId = userIdentity.I
-            await _context.Users.AddAsync(new User { Username = userIdentity.Id, Email = userIdentity.Email, CurrencyId = authData.CurrencyId });
+            await _context.Users.AddAsync(new User { Username = userIdentity.UserName, Email = userIdentity.Email, CurrencyId = authData.CurrencyId, IdentityId = userIdentity.Id });
             await _context.SaveChangesAsync();
             return new OkObjectResult("Account created");
         }
