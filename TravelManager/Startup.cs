@@ -19,8 +19,9 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using TravelManager.Auth;
 using Swashbuckle.AspNetCore.Swagger;
-
-
+using Hangfire;
+using Hangfire.MySql.Core;
+using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 namespace TravelManager
 {
     public class Startup
@@ -54,9 +55,28 @@ namespace TravelManager
                 });
 
             });
-            
+
+
+            services.AddHangfire(x => x.UseStorage( new MySqlStorage(
+                "server=localhost;uid=dotnet;pwd=36<Bjbj.$ARj{`]W;database=TravelManager;Allow User Variables=True",
+                new MySqlStorageOptions
+                {
+                    TablePrefix = "Hangfire"
+                }
+                )));
+            services.AddHangfireServer();
+
+
+
             var jwtAppSettingOptions = Configuration.GetSection(nameof(JwtIssuerOptions));
-            services.AddDbContext<TravelManagerContext>(opt => opt.UseInMemoryDatabase("TMTest"));
+            //services.AddDbContext<TravelManagerContext>(opt => opt.UseMySQL(Configuration.GetConnectionString("MySQLConnection")));
+            services.AddDbContextPool<TravelManagerContext>( // replace "YourDbContext" with the class name of your DbContext
+                options => options.UseMySql(Configuration.GetConnectionString("MySQLConnection"), // replace with your Connection String
+                    mySqlOptions =>
+                    {
+                        mySqlOptions.ServerVersion(new Version(8, 0, 16), ServerType.MySql); // replace with your Server Version and Type
+                    }
+            ));
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddMvc()
                             .AddJsonOptions(
@@ -129,6 +149,7 @@ namespace TravelManager
         {
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();
+            app.UseHangfireDashboard();
 
             // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), 
             // specifying the Swagger JSON endpoint.

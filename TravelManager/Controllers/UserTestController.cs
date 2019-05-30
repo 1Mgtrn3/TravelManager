@@ -58,6 +58,7 @@ namespace TravelManager.Controllers
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] string value)
         {
+            //return  BadRequest(new { error = "problem" });
         }
 
         // DELETE: api/ApiWithActions/5
