@@ -9,7 +9,8 @@ namespace TravelManager.Models
     {
         public long CurrencyId { get; set; }
         public string Name { get; set; }
-        public char Symbol { get; set; } 
+        public string Symbol { get; set; } 
+        public string Description { get; set; }
         public ICollection<Event> Events { get; set; }
         public ICollection<User> Users { get; set; }
         public ICollection<ExchangeRate> FirstExchangeRates { get; set; }

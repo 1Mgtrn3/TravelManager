@@ -23,7 +23,7 @@ namespace TravelManager.Controllers
         }
 
         // GET: api/ExchangeRates
-        [Authorize]
+        //[Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ExchangeRate>>> GetExchangeRates()
         {
@@ -38,7 +38,7 @@ namespace TravelManager.Controllers
         }
 
         // GET: api/ExchangeRates/5
-        [Authorize]
+        //[Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<ExchangeRate>> GetExchangeRate(long id)
         {
@@ -53,7 +53,7 @@ namespace TravelManager.Controllers
         }
 
         // PUT: api/ExchangeRates/5
-        [Authorize]
+        //[Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutExchangeRate(long id, ExchangeRate exchangeRate)
         {
@@ -84,7 +84,7 @@ namespace TravelManager.Controllers
         }
 
         // POST: api/ExchangeRates
-        [Authorize]
+        //[Authorize]
         [HttpPost]
         public async Task<ActionResult<ExchangeRate>> PostExchangeRate(ExchangeRate exchangeRate)
         {
@@ -95,7 +95,7 @@ namespace TravelManager.Controllers
         }
 
         // DELETE: api/ExchangeRates/5
-        [Authorize]
+        //[Authorize]
         [HttpDelete("{id}")]
         public async Task<ActionResult<ExchangeRate>> DeleteExchangeRate(long id)
         {

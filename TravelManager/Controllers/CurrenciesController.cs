@@ -22,7 +22,7 @@ namespace TravelManager.Controllers
             {
                 // Create a new Currency if collection is empty,
                 
-                _context.Currencies.Add(new Currency { Name = "American Dollar (USD)" , Symbol = '$' });
+                _context.Currencies.Add(new Currency { Name = "USD" , Description = "US dollar", Symbol = "$" });
                 _context.SaveChanges();
             }
         }
