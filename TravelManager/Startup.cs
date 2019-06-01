@@ -66,7 +66,7 @@ namespace TravelManager
                 }
                 )));
             services.AddHangfireServer();
-
+            services.AddScoped<IExchangeRateProvider, ExchangeRateProvider>();
 
 
             var jwtAppSettingOptions = Configuration.GetSection(nameof(JwtIssuerOptions));
@@ -151,7 +151,7 @@ namespace TravelManager
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();
             app.UseHangfireDashboard();
-            RecurringJob.AddOrUpdate(() => Console.Write("Easy!"), Cron.Daily);
+            RecurringJob.AddOrUpdate<IExchangeRateProvider>(exchangeRateProvider => exchangeRateProvider.Start(), Cron.Minutely);
             // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), 
             // specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(c =>
